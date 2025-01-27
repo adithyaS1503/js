@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        .main{
+            text-align: center;
+        }
+        #result{
+            font-size: 200%;
+        }
+        .fields{
+            margin: 1%;
+        }
+        .butt{
+            margin: 1%;
+        }
+    </style>
+    <script src="main.js" async></script>
+</head>
+<body>
+    <div class="main">
+        <h1>Simple Calculator</h1>
+        <div class="ops-box">
+            <input type="number" class="fields" id="field1" required placeholder="Field 1">
+            <br>
+            <input type="number" class="fields" id='field2' required placeholder="Field 2">
+            <br>
+            <button type="submit" class ="butt" id="calc">Add</button>
+            <button type="submit" class ="butt" id="subtract">Subtract</button>
+            <button type="button" class ="butt" id="multiply">Mutliply</button>
+            <button type="divide" class ="butt" id="modulo">Modulo</button>
+            <p id="operation"></p>
+            <p id="result">Result</p>
+        </div>
+    </div>
+</body>
+</html>

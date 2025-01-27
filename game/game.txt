@@ -1,0 +1,4 @@
+Ideas for the game: 
+
+Galaga clone where enemies respawn after every 30 seconds and they shoot faster. Mainly using JS
+RPG maker type of game
