@@ -7,14 +7,14 @@ let maxM = 5;
 let fhH = 15;
 let grdsmnH = 30;
 
-let OPPONENTS_QUEUE = 0;
+let OPPONENTS_QUEUE = 3;
+let ROUNDS = 0;
+let SUMMON_GUARD = 0;
 
-
-let userInput = prompt("Choose: \n\t1. A \n\t2. H \n\t3. B\n\t4. Use Special\n\t5. Forego Round");
+function userPrompt(){
+    let userInput = prompt("Choose: \n\t1. A \n\t2. H \n\t3. B\n\t4. Use Special\n\t5. Forego Round");
     switch(parseInt(userInput)){
         case 1: case 2: case 3: 
-            // userInput = 10;
-            // console.log("Perfect attack deals 10 damage")
             actionRoll(userInput);
             break;
         case 4: 
@@ -24,6 +24,20 @@ let userInput = prompt("Choose: \n\t1. A \n\t2. H \n\t3. B\n\t4. Use Special\n\t
         default:
             console.log("idk");
     }
+}
+
+
+while(maxH>0){
+    if(fhH<=0){
+        break;
+    }
+    userPrompt();
+    fhAttack();
+    fhAttack();
+    ROUNDS++;
+}
+
+
 
 
 // maybe I'll combine this function and actModifier into one. 
@@ -52,41 +66,35 @@ function actionRoll(userInput){
     actionOut = userInput * act;
     
     if(isBlock!=0){
-        console.log("Your block/damage negation is:",actionOut)
+        console.log("Your block/damage negation is:",actionOut);
     } else{
         console.log("Your attack output:",actionOut);
+        fhH -= actionOut;
+        console.log("Feral Hound health is:",fhH);
+        if(fhH <= 0){
+            alert("You have killed the beast.");
+        }
     }
-    return fhAttack();
 }
 
-
+const feralHound = {
+    gnaw: 10,
+    pounce: 10,
+    howl: SUMMON_GUARD++
+};
 
 //Enemy rolls
 function fhAttack(){
+    let enemyActOut = 0;
     let enemyAtk = Math.random();
     console.log("Enemy RNG:",enemyAtk);
     enemyAtk = parseFloat(enemyAtk.toFixed(1));
     console.log("Enemy rolled:",enemyAtk);
+    maxH -= enemyAtk;
+    console.log("Your health is now:",maxH);
+    
+    if(maxH<=0){
+        alert("Game Over");
+    }
     return enemyAtk;
 }
-
-// Enemy attack functions in thier respective objects
-const feralHound = {
-    gnaw: fhAttack(),
-    pounce: fhAttack(),
-    howl: fhAttack(),
-};
-
-const guardsMan = {
-    attack: fhAttack(),
-    heavyAttack: fhAttack(),
-    block: fhAttack(),
-};
-
-
-// trying to randomly call an enemy attack-function in their respective object
-const fhkeys = Object.keys(feralHound);
-
-const randomFhKey = fhKeys[Math.floor(Math.random() * fhkeys.length)];
-console.log(`Randomly calling feralHound.${randomFhKey}:`);
-console.log(feralHound[randomFhKey]());
