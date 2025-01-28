@@ -1,19 +1,20 @@
+//PC stat
+let maxH = 20;
+let maxS = 10;
+let maxM = 5;
+
+//nme stat 
+let fhH = 15;
+let grdsmnH = 30;
+
+let OPPONENTS_QUEUE = 0;
+
+
 let userInput = prompt("Choose: \n\t1. A \n\t2. H \n\t3. B\n\t4. Use Special\n\t5. Forego Round");
-console.log(userInput, typeof userInput);
     switch(parseInt(userInput)){
-        case 1: 
-            userInput = 10;
-            console.log("Perfect attack deals 10 damage")
-            actionRoll(userInput);
-            break;
-        case 2:
-            userInput = 15;
-            console.log("Perfect heavy attack deals 15 damage")
-            actionRoll(userInput);
-            break;
-        case 3: 
-            userInput = 10;
-            console.log("Perfect block negates 10 damage")
+        case 1: case 2: case 3: 
+            // userInput = 10;
+            // console.log("Perfect attack deals 10 damage")
             actionRoll(userInput);
             break;
         case 4: 
@@ -24,60 +25,68 @@ console.log(userInput, typeof userInput);
             console.log("idk");
     }
 
-// let actionQueue = 3;
-// function qUpdate(){
-//         console.log("Queue was:",actionQueue);
-//         alert("Enemy has perished");
-//         actionQueue--;
-//         console.log("Queue is:",actionQueue);
-//     }
-
-
 
 // maybe I'll combine this function and actModifier into one. 
+// atkBase - atk Modifier float, atk - atk modifier, actionOut - 
 function actionRoll(userInput){
-    let atkBase = Math.random()
-    atk = parseFloat(atkBase.toFixed(1))
-    console.log("You rolled:",atk)
-    // return actModifier(atk, userInput)
-    let actionOut = userInput * atk;
-    console.log("Your attack/block output:",actionOut);
+    let isBlock = 0;
+    let actionOut = 0;
+
+    // checking what the user input was
+    if(userInput==1){
+        console.log("A:10dmg");
+        userInput = 10;
+    } else if(userInput==2){
+        console.log("H:15dmg");
+        userInput = 15;
+    } else{
+        console.log("B:-10dmg");
+        isBlock = 1;
+        userInput = 10;
+    }
+    
+    let actBase = Math.random()
+    console.log("Your RNG bw 0-1:",actBase)
+    act = parseFloat(actBase.toFixed(1))
+    console.log("You rolled:",act)
+    actionOut = userInput * act;
+    
+    if(isBlock!=0){
+        console.log("Your block/damage negation is:",actionOut)
+    } else{
+        console.log("Your attack output:",actionOut);
+    }
     return fhAttack();
 }
 
-// might use it for the enemies.
-// function actModifier(atk, userInput){
-//     let actionOut = userInput * atk;
-//     console.log("Your attack/block output:",actionOut);
-//     fhAttack();
-// }
 
 
-//Enemy stuff 
-
-function enemyQueue(){
-    const feralHound = {
-        gnaw: fhAttack(),
-        pounce: fhAttack(),
-        howl: fhAttack(),
-    };
-    const guardsMan = {
-        attack: fhAttack(),
-        heavyAttack: fhAttack(),
-        block: fhAttack(),
-    };
-}
-
-// reusing for now
+//Enemy rolls
 function fhAttack(){
-    let enemyAtk = Math.random()
-    enemyAtk = parseFloat(enemyAtk.toFixed(1))
-    console.log("Enemy rolled:",enemyAtk)
-    actionQueue();
+    let enemyAtk = Math.random();
+    console.log("Enemy RNG:",enemyAtk);
+    enemyAtk = parseFloat(enemyAtk.toFixed(1));
+    console.log("Enemy rolled:",enemyAtk);
+    return enemyAtk;
 }
 
+// Enemy attack functions in thier respective objects
+const feralHound = {
+    gnaw: fhAttack(),
+    pounce: fhAttack(),
+    howl: fhAttack(),
+};
 
-// grdsmn -stat
-// a - 10
-// h - 15
-// b - 15
+const guardsMan = {
+    attack: fhAttack(),
+    heavyAttack: fhAttack(),
+    block: fhAttack(),
+};
+
+
+// trying to randomly call an enemy attack-function in their respective object
+const fhkeys = Object.keys(feralHound);
+
+const randomFhKey = fhKeys[Math.floor(Math.random() * fhkeys.length)];
+console.log(`Randomly calling feralHound.${randomFhKey}:`);
+console.log(feralHound[randomFhKey]());
