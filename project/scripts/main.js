@@ -27,12 +27,11 @@ function userPrompt(){
 }
 
 
-while(maxH>0){
-    if(fhH<=0){
-        break;
-    }
+while(maxH>0 && fhH>0){
+    // if(fhH<=0){
+    //     break;
+    // }
     userPrompt();
-    fhAttack();
     fhAttack();
     ROUNDS++;
 }
