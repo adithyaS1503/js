@@ -10,19 +10,28 @@ modulo = document.getElementById('modulo');
 let prefix = "Operation is: "
 result.textContent = "";
 
-
+arrayLog = []
 
 let answer = 0;
 
 button.onclick = function(){
     let field1 = document.getElementById('field1').value;
     let field2 = document.getElementById('field2').value;
-    // let field1 = Number(document.getElementById('field1').value);
-    // let field2 = Number(document.getElementById('field2').value);
-    operation.textContent = prefix + field1 + " + " + field2
-    answer = Number(field1) + Number(field2);
-    console.log(answer, typeof answer);
-    result.textContent = answer;
+
+    if((field1 == "") && (field2 =="")){
+        alert("Fields are empty, please enter a value")
+    } else if(field1 == ""){
+        alert("Field 1 is empty.")
+    } else if(field2 ==""){
+        alert("Field 2 is empty.")
+    } else{
+        arrayLog.push(Number(field1), Number(field2))
+        console.log(arrayLog)
+        operation.textContent = prefix + field1 + " + " + field2
+        answer = Number(field1) + Number(field2);
+        console.log(answer, typeof answer);
+        result.textContent = answer;
+    }
 }
 
 subt.onclick = function(){
