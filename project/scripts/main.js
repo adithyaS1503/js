@@ -4,7 +4,7 @@ let maxS = 10;
 let maxM = 5;
 let BLOCK = 0;
 
-//nme stat 
+//nme stat
 let fhH = 15;
 let grdsmnH = 30;
 
@@ -15,10 +15,10 @@ let SUMMON_GUARD = 0;
 function userPrompt(){
     let userInput = prompt("Choose: \n\t1. A \n\t2. H \n\t3. B\n\t4. Use Special\n\t5. Forego Round");
     switch(parseInt(userInput)){
-        case 1: case 2: case 3: 
+        case 1: case 2: case 3:
             actionRoll(userInput);
             break;
-        case 4: 
+        case 4:
             let spclMove = prompt("WIP\n");
             // let spclMove = prompt("Choose Special:\n\t1. Potion of Second Chance\n\t2. Healing Elixir\n\t3. Stamina Elixir\n\t4. Magicka Elixir\n\t5. exit")
             console.log("Chosen special:",spclMove)
@@ -32,6 +32,7 @@ while(maxH>0 && fhH>0){
     // if(fhH<=0){
     //     break;
     // }
+    // to remove fh from queue, enclose it within an if-condition
     console.log("\nBEGIN ROUND");
     userPrompt();
     fhAttack();
@@ -42,8 +43,8 @@ while(maxH>0 && fhH>0){
 
 
 
-// maybe I'll combine this function and actModifier into one. 
-// atkBase - atk Modifier float, atk - atk modifier, actionOut - 
+// maybe I'll combine this function and actModifier into one.
+// atkBase - atk Modifier float, atk - atk modifier, actionOut -
 function actionRoll(userInput){
     let isBlock = 0;
     let actionOut = 0;
@@ -60,13 +61,13 @@ function actionRoll(userInput){
         isBlock = 1;
         // userInput = 10;
     }
-    
+
     let actBase = Math.random()
     console.log("Your RNG bw 0-1:",actBase)
     act = parseFloat(actBase.toFixed(1))
     console.log("You rolled:",act)
     actionOut = userInput * act;
-    
+
     if(isBlock!=0){
         console.log("Your block/damage negation is:",actionOut);
         BLOCK += userInput;
@@ -88,25 +89,51 @@ const feralHound = {
 
 //Enemy rolls
 function fhAttack(){
-    // let enemyActOut = 0;
-    let enemyAtk = Math.random();
-    console.log("Enemy RNG:",enemyAtk);
+    console.log("\nFeral Hound Turn")
+    // fh moves
+    let gnaw = 10;
+    let pounce = 15;
+    let enemyActOut = 0;
     
-    enemyAtk = parseFloat(enemyAtk.toFixed(1));
+    // RNG bw 0-1 for enemey. eg: 0.654363
+    let enemyAtkMod = Math.random();
+    console.log("Enemy RNG:",enemyAtkMod);
+
+    // Rounding it up. So, 0.654363 becomes 0.6
+    enemyAtk = parseFloat(enemyAtkMod.toFixed(1));
     console.log("Enemy rolled:",enemyAtk);
-    
-    if(BLOCK>0){
-        enemyAtk -= BLOCK;
-        maxH -= enemyAtk;
-        console.log("Your health is now:",maxH);    
+
+
+    // Testing
+    if(enemyAtkMod >= 0.66){
+        enemyActOut = pounce * enemyAtk;
+        console.log("Enemy Attack Output:",enemyActOut)
+        maxH -= enemyActOut;
+        console.log("Your health is now:",maxH);
+    } else if((enemyAtkMod >= 0.33) && (enemyAtkMod < 0.66)){
+        enemyActOut = gnaw * enemyAtk; 
+        console.log("Enemy Attack Output:",enemyActOut)
+        maxH -= enemyActOut;
+        console.log("Your health is now:",maxH);
     } else{
-        maxH -= enemyAtk;
-        console.log("Your health is now:",maxH);    
+        SUMMON_GUARD++;
+        console.log("The hound seems to be calling out...")
     }
+
+
+    // Block too OP pls nerf
+    // if(BLOCK>0){
+    //     enemyAtk -= BLOCK;
+    //     maxH -= enemyAtk;
+    //     console.log("Your health is now:",maxH);
+    // } else{
+    //     maxH -= enemyAtk;
+    //     console.log("Your health is now:",maxH);
+    // }
 
     // maxH -= enemyAtk;
     // console.log("Your health is now:",maxH);
-    
+
     if(maxH<=0){
         alert("Game Over");
     }
