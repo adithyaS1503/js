@@ -2,6 +2,7 @@
 let maxH = 20;
 let maxS = 10;
 let maxM = 5;
+let BLOCK = 0;
 
 //nme stat 
 let fhH = 15;
@@ -31,8 +32,10 @@ while(maxH>0 && fhH>0){
     // if(fhH<=0){
     //     break;
     // }
+    console.log("\nBEGIN ROUND");
     userPrompt();
     fhAttack();
+    console.log("\nEND OF ROUND");
     ROUNDS++;
 }
 
@@ -55,7 +58,7 @@ function actionRoll(userInput){
     } else{
         console.log("B:-10dmg");
         isBlock = 1;
-        userInput = 10;
+        // userInput = 10;
     }
     
     let actBase = Math.random()
@@ -66,6 +69,7 @@ function actionRoll(userInput){
     
     if(isBlock!=0){
         console.log("Your block/damage negation is:",actionOut);
+        BLOCK += userInput;
     } else{
         console.log("Your attack output:",actionOut);
         fhH -= actionOut;
@@ -84,13 +88,24 @@ const feralHound = {
 
 //Enemy rolls
 function fhAttack(){
-    let enemyActOut = 0;
+    // let enemyActOut = 0;
     let enemyAtk = Math.random();
     console.log("Enemy RNG:",enemyAtk);
+    
     enemyAtk = parseFloat(enemyAtk.toFixed(1));
     console.log("Enemy rolled:",enemyAtk);
-    maxH -= enemyAtk;
-    console.log("Your health is now:",maxH);
+    
+    if(BLOCK>0){
+        enemyAtk -= BLOCK;
+        maxH -= enemyAtk;
+        console.log("Your health is now:",maxH);    
+    } else{
+        maxH -= enemyAtk;
+        console.log("Your health is now:",maxH);    
+    }
+
+    // maxH -= enemyAtk;
+    // console.log("Your health is now:",maxH);
     
     if(maxH<=0){
         alert("Game Over");
