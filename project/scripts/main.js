@@ -17,8 +17,8 @@ let maxM = 5;
 let BLOCK = 0;
 
 //nme stat
-let fhH = 15;
-let fhH2 = 15;
+let fhH = 20;
+let fhH2 = 30;
 let grdsmnH = 30;
 
 // enemy stats for the module
@@ -62,17 +62,20 @@ const enemyData = {
         console.log("The hound seems to be calling out...");
     },
     attackRoll: function(){
-        let enemyAtkMod = Math.random();
-        console.log("Enemy RNG:", enemyAtkMod);
+        // Generate random number bw 0-1
+        this.enemyAtkMod = Math.random();
+        console.log("Enemy RNG:", this.enemyAtkMod);
     
-        let enemyAtk = parseFloat(enemyAtkMod.toFixed(1));
-        console.log("Enemy rolled:", enemyAtk);
-    },
+        // Round up the random number
+        this.enemyAtk = parseFloat(this.enemyAtkMod.toFixed(1));
+        console.log("Enemy rolled:", this.enemyAtk);
+    },    
     hound1: function fhAttack1(){
         console.log("\nFeral Hound Turn");
-        
+    
+        // Call attackRoll() to assign enemyAtkMod and enemyAtk
         this.attackRoll();
-
+    
         if(this.enemyAtkMod >= 0.66){
             let enemyActOut = this.pounce * this.enemyAtk; 
             console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
@@ -81,7 +84,7 @@ const enemyData = {
         } else if(this.enemyAtkMod >= 0.33) {
             let enemyActOut = this.gnaw * this.enemyAtk;  
             console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
-            
+    
             if(maxS >= 8){
                 maxH -= enemyActOut;
             } else if(maxS >= 5) {
@@ -99,6 +102,7 @@ const enemyData = {
         } else {
             this.howl();  
         }
+    
         if(maxH <= 0){
             alert("Game Over");
         }
@@ -106,12 +110,12 @@ const enemyData = {
     hound2: function fhAttack2(){
         console.log("\nFeral Hound 2 Turn");
 
-        if(this.enemyAtkMod >= 0.66){
+        if(this.enemyAtkMod >= 0.75){
             let enemyActOut = this.pounce * this.enemyAtk; 
             console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
             maxS -= enemyActOut;
             console.log("Your STAMINA is now:", maxS);
-        } else if(this.enemyAtkMod >= 0.33) {
+        } else if(this.enemyAtkMod >= 0.25) {
             let enemyActOut = this.gnaw * this.enemyAtk;  
             console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
             
@@ -148,31 +152,18 @@ const guardsMan = {
 };
 
 
+// Queues 
 
-while(maxH>0 && fhH>0){
+while(maxH>0){
     if(ROUNDS==0){
         console.log("COMMENCE BATTLE");
     } else if(ROUNDS>0){
-        console.log("NEW ROUND");
+        console.log("NEW ROUND. ROUND number: ",ROUNDS);
         console.log("Your STATS are now: H:",maxH," S:",maxS," M:",maxM);
         console.log("Feral Hound STATS: H:",fhH," Howls:",SUMMON_GUARD);
-        
-        if(isHound2Active ==1){
-            console.log("Feral Hound 2 STATS: H:",fhH2," Howls:",SUMMON_GUARD);
-        }
     }
-
     userPrompt();
     enemyData.hound1();
-    // feralHound.hound1();
-    if(ROUNDS==3){
-        isHound2Active++;
-        enemyData.hound2();
-    }
-    if(SUMMON_GUARD==5){
-        console.log("Someone is approaching...")
-    }
-
     console.log("\nEND OF ROUND");
     ROUNDS++;
 }
@@ -190,21 +181,13 @@ function actionRoll(userInput){
     if(userInput==1){
         console.log("You used ATTTACK:10dmg");        
         userInput = 10;
-        // Stamina check 
-        if(maxS == 10){
-            userInput = 10;
-            // maxS -= 1;
-        } else if((maxS>=5) && (maxS<10)){
+        if(maxS>=3){
             userInput -= 2;
-            maxS -= 1;
-        } else if((maxS>=0) && (maxS<5)){
-            userInput -= 5;
-            maxS -= 1;
-        } else{
-            userInput = 0;
-            maxS -= 1;
         }
         maxS -= 1;
+        if(maxS<=0){
+            userInput = 0;
+        }
     } else if(userInput==2){
         console.log("You used HEAVY-ATTACK:15dmg");
         userInput = 15;
