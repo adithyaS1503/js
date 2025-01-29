@@ -33,7 +33,11 @@ while(maxH>0 && fhH>0){
     //     break;
     // }
     // to remove fh from queue, enclose it within an if-condition
-    console.log("\nBEGIN ROUND");
+    if(ROUNDS==0){
+        console.log("COMMENCE BATTLE");
+    } else if(ROUNDS>0){
+        console.log("NEW ROUND");
+    }
     userPrompt();
     fhAttack();
     console.log("\nEND OF ROUND");
@@ -51,13 +55,13 @@ function actionRoll(userInput){
 
     // checking what the user input was
     if(userInput==1){
-        console.log("A:10dmg");
+        console.log("You used ATTTACK:10dmg");
         userInput = 10;
     } else if(userInput==2){
-        console.log("H:15dmg");
+        console.log("You used HEAVY-ATTACK:15dmg");
         userInput = 15;
     } else{
-        console.log("B:-10dmg");
+        console.log("You used BLOCK:-10dmg");
         isBlock = 1;
         // userInput = 10;
     }
