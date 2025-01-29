@@ -7,13 +7,18 @@ Stuff to do:
 3. GuardsMan
 4. Block is too good a conter for gnaw, the ranges for gnaw and pounce have to be readjusted.
 5. implement specials
+6. Completely get rid of the stamina system? It's getting too annoying to deal with.
+7. Fix console.logs
 */
 
+/*
+Current scope: 
+hound 1, after round 3 or 3 howls, hound 2. No multiple characters, enemies or bosses. 
+*/
 
 //PC stat
 let playerHealth = 20;
 let playerStamina = 10;
-let playerMagicka = 5;
 let isBlock = 0;
 
 //nme stat
@@ -46,8 +51,6 @@ function userPrompt(){
             console.log("idk");
     }
 }
-
-
 
 
 
@@ -92,15 +95,17 @@ const enemyData = {
                 console.log("Your STAMINA is now:", playerStamina);
             
             } else{
-                let enemyActOut = this.pounce * this.enemyAtk; 
-                
-                if(playerStamina<=0){
-                    enemyActOut *= 2;
-                }
 
-                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                enemyActOut = this.pounce * this.enemyAtk; 
                 playerStamina -= enemyActOut;
+                if(playerStamina <= 0)
+                {
+                    enemyActOut=0;
+                    console.log("You have no STAMINA left, the Feral Hound knocks you down.");           
+                }else{
+                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
                 console.log("Your STAMINA is now:", playerStamina);
+                }
             }
 
         } else if(this.enemyAtkMod >= 0.33) {
@@ -122,19 +127,11 @@ const enemyData = {
                 playerHealth -= enemyActOut;
                 console.log("Your HEALTH is now:", playerHealth);
             }
-            
-            // let enemyActOut = this.gnaw * this.enemyAtk;
-            // playerHealth -= enemyActOut  
-            // console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
         } else {
             this.howl();  
         }
-    
-        if(playerHealth <= 0){
-            alert("Game Over");
-        }
     },
-    hound2: function fhAttack1(){
+    hound1: function fhAttack1(){
         console.log("Block: ",isBlock);
         console.log("\nFeral Hound Turn");
     
@@ -156,15 +153,17 @@ const enemyData = {
                 console.log("Your STAMINA is now:", playerStamina);
             
             } else{
-                let enemyActOut = this.pounce * this.enemyAtk; 
-                
-                if(playerStamina<=0){
-                    enemyActOut *= 2;
-                }
 
-                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                enemyActOut = this.pounce * this.enemyAtk; 
                 playerStamina -= enemyActOut;
+                if(playerStamina <= 0)
+                {
+                    enemyActOut=0;
+                    console.log("You have no STAMINA left, the Feral Hound knocks you down.");           
+                }else{
+                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
                 console.log("Your STAMINA is now:", playerStamina);
+                }
             }
 
         } else if(this.enemyAtkMod >= 0.33) {
@@ -186,16 +185,8 @@ const enemyData = {
                 playerHealth -= enemyActOut;
                 console.log("Your HEALTH is now:", playerHealth);
             }
-            
-            // let enemyActOut = this.gnaw * this.enemyAtk;
-            // playerHealth -= enemyActOut  
-            // console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
         } else {
             this.howl();  
-        }
-    
-        if(playerHealth <= 0){
-            alert("Game Over");
         }
     }
 };
@@ -220,7 +211,7 @@ while(playerHealth>0){
         console.log("COMMENCE BATTLE");
     } else if(ROUNDS>0){
         console.log("\nNEW ROUND. ROUND number: ",ROUNDS);
-        console.log("Your STATS are now: H:",playerHealth," S:",playerStamina," M:",playerMagicka);
+        console.log("Your STATS are now: H:",playerHealth," S:",playerStamina);
     }
 
     userPrompt();
@@ -237,14 +228,16 @@ while(playerHealth>0){
     if(ROUNDS>3 && isHound2Active==1){
         enemyData.hound2();
     }
-    
-    console.log("\nEND OF ROUND");
-    isBlock = 0;
-    ROUNDS++;
+   
     if (playerHealth <= 0) {
         console.log("You have died.");
         break;
     }
+
+    console.log("\nEND OF ROUND");
+    isBlock = 0;
+    ROUNDS++;
+   
     // if (OPPONENTS_QUEUE <= 0) {
     //     console.log("You have defeated all enemies! Victory!");
     //     break;
@@ -253,7 +246,6 @@ while(playerHealth>0){
 
 
 function actionRoll(userInput){
-    // let isBlock = 0;
     let actionOut = 0;
 
     // checking what the user input was
@@ -265,8 +257,6 @@ function actionRoll(userInput){
         } else if(playerStamina<=0){
             userInput = 0;
         }
-        playerStamina -= 1;
-
 
         let actBase = Math.random()
         console.log("Your RNG bw 0-1:",actBase)
