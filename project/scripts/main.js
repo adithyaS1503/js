@@ -4,7 +4,7 @@ let maxS = 10;
 let maxM = 5;
 let BLOCK = 0;
 
-//test
+//tests
 
 //nme stat
 let fhH = 15;
@@ -98,7 +98,7 @@ function fhAttack(){
     console.log("\nFeral Hound Turn")
     // fh moves
     let gnaw = 10;
-    let pounce = 15;
+    let pounce = 5;
     let enemyActOut = 0;
     
     // RNG bw 0-1 for enemey. eg: 0.654363
@@ -109,18 +109,32 @@ function fhAttack(){
     enemyAtk = parseFloat(enemyAtkMod.toFixed(1));
     console.log("Enemy rolled:",enemyAtk);
 
+    // DMG expl
+    // S DMG - take more H DMG
+
 
     // Testing
     if(enemyAtkMod >= 0.66){
         enemyActOut = pounce * enemyAtk;
-        console.log("Enemy Attack Output:",enemyActOut)
-        maxH -= enemyActOut;
-        console.log("Your health is now:",maxH);
+        console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:",enemyActOut)
+        // maxH -= enemyActOut;
+        maxS -= enemyActOut;
+
+        // Check if isBlock is active, if it is, no stamina damage
+        console.log("Your STAMINA is now:",maxS);
     } else if((enemyAtkMod >= 0.33) && (enemyAtkMod < 0.66)){
         enemyActOut = gnaw * enemyAtk; 
-        console.log("Enemy Attack Output:",enemyActOut)
+        console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:",enemyActOut)
+        
+        // Stamina check
+        if(maxS == 10){
+            maxH -= enemyActOut;
+        } else if((maxS>=5) && (maxS<10))
+        {
+            enemyActOut += 2;
+        }
         maxH -= enemyActOut;
-        console.log("Your health is now:",maxH);
+        console.log("Your HEALTH is now:",maxH);
     } else{
         SUMMON_GUARD++;
         console.log("The hound seems to be calling out...")
