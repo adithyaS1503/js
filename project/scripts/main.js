@@ -4,6 +4,8 @@ let maxS = 10;
 let maxM = 5;
 let BLOCK = 0;
 
+//test
+
 //nme stat
 let fhH = 15;
 let grdsmnH = 30;
