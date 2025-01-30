@@ -1,5 +1,6 @@
 /*
 To do: 
+choose target menu doesn't show 
 loading enemies into an array. If I can't do that, I'll need to just use if-else conditions.
 choosing between mulitple enemies when there's more than 1.
 transitioning backgrounds, all that stuff
@@ -236,7 +237,8 @@ const playerDat = {
         console.log("Your modifier:",modifier);
         attackValue = userInput * modifier;
         console.log("Your output:",attackValue);
-        this.playerAttack(attackValue);
+        // this.playerAttack(attackValue);
+        this.chooseTarget(attackValue);
     },
     playerAttack: function(attackValue){
         // Actual damage happens here:
@@ -267,24 +269,24 @@ const playerDat = {
             console.log(`GuardsMan health is now: ${guardsManhealth}`);
         }
     },
-    chooseTarget: function(){
+    chooseTarget: function(attackValue){
         if(OPPONENTS_QUEUE == 1){   
-            this.playerAttack();
+            this.playerAttack(attackValue);
         } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1))&& (isHound2Active == 1)){
             target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2`));
             if(target == 1){
-                this.playerAttack();
+                this.playerAttack(attackValue);
             } else{
-                this.playerAttackHound2();
+                this.playerAttackHound2(attackValue);
             }
         } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1)) && (isgmActive == 1)){
             target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2\n\t3. GuardsMan`));
             if(target == 1){
-                this.playerAttack();
+                this.playerAttack(attackValue);
             } else if(target ==2 ){
-                this.playerAttackHound2();
+                this.playerAttackHound2(attackValue);
             } else{
-                this.playerAttackGuard();
+                this.playerAttackGuard(attackValue);
             }
         }
     }
