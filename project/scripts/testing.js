@@ -1,8 +1,8 @@
 /*
 To do: 
-Stop executing functions when chars are dead.
+loading enemies into an array. If I can't do that, I'll need to just use if-else conditions.
+choosing between mulitple enemies when there's more than 1.
 */
-
 
 let isBlock = 0;
 let userInput = 0;
@@ -11,20 +11,19 @@ let userInput = 0;
 let health = 20;
 let stamina = 10; 
 let feralHoundHealth = 10;
+let feralHoundHealth2 = 10;
 
 
 // Meta
 let OPPONENTS_QUEUE = 1; // ++ when any other enemy spawns
 let ROUNDS = 0;
 let SUMMON_GUARD = 0;
-
 let isHound1Active = 1; //always 1, first enemy
+let isHound2Active = 0;
 
 
 
 const enemyData = {
-
-    // feralHoundHealth: 10,
     gnaw: 15,
     pounce: 5, // Pounce used to be 10. OP. Then 5, also OP.
     howl: function() {
@@ -97,15 +96,71 @@ const enemyData = {
         } else {
             this.howl();  
         }
+    },
+    hound2: function fhAttack2(){
+        console.log("\nFeral Hound Turn");
+    
+        // Call attackRoll() to assign enemyAtkMod and enemyAtk
+        this.attackRoll();
+    
+        if(this.enemyAtkMod >= 0.66){
+            if(isBlock!=0){
+                let enemyActOut = this.pounce * this.enemyAtk;
+                console.log("Before damage negate:",enemyActOut);
+                enemyActOut -= 5;
+                if(enemyActOut<=0){
+                    console.log("Perfect BLOCK!");
+                    enemyActOut = 0;
+                }
+                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                stamina -= enemyActOut;
+                console.log("Your STAMINA is now:", stamina);
+            
+            } else{
+
+                enemyActOut = this.pounce * this.enemyAtk; 
+                stamina -= enemyActOut;
+                if(stamina <= 0)
+                {
+                    enemyActOut=0;
+                    console.log("You have no STAMINA left, the Feral Hound knocks you down.");           
+                }else{
+                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                console.log("Your STAMINA is now:", stamina);
+                }
+            }
+
+        } else if(this.enemyAtkMod >= 0.33) {
+            
+            if(isBlock!=0){
+                let enemyActOut = this.gnaw * this.enemyAtk;
+                console.log("Before damage negate:",enemyActOut);
+                enemyActOut -= 5;
+                if(enemyActOut<=0){
+                    console.log("Perfect BLOCK!");
+                    enemyActOut = 0;
+                }
+                console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
+                health -= enemyActOut;
+                console.log("Your HEALTH is now:", health);
+            } else{
+                let enemyActOut = this.gnaw * this.enemyAtk;
+                console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
+                health -= enemyActOut;
+                console.log("Your HEALTH is now:", health);
+            }
+        } else {
+            this.howl();  
+        }
     }
 };
 
 
-// Need to figure out how this works.
+// Need to figure out how this works for multiple enemies
 const queueMgmt = {
     execEle: function(){
         console.log(`Array is: ${nmeQ}`);
-        var nmeQ = [enemyData.hound1()];
+        var nmeQ = [enemyData.hound1(), enemyData.hound2()];
     },
     addEle: function(){
         this.nmeQ.push();
@@ -130,7 +185,7 @@ const playerDat = {
             userInput = this.hAttack;
             this.playerRoll(userInput);
         } else if(userInput==3) {
-            console.log("You used BLOCK.");
+            console.log("You used BLOCK. You can negate 5 damage");
             isBlock++;
         } else{
             console.log("Foregoing Round...");
@@ -154,7 +209,7 @@ const playerDat = {
         if ((feralHoundHealth - attackValue) <= 0){
             feralHoundHealth = 0;
             isHound1Active = 0;
-            console.log(`Feral Hound has died.`);
+            // console.log(`Feral Hound has died.`);
         } else{
             feralHoundHealth -= attackValue;
             console.log(`Feral Hound health is now: ${feralHoundHealth}`);
@@ -182,14 +237,11 @@ while(health > 0){
     if(feralHoundHealth!=0){
         if(isHound1Active!=0){
 
-            // is this the code that exeuctes attack?
-            queueMgmt.execEle();
+            // Not good for multiple enemies.
+            // queueMgmt.execEle();
 
-            // enemyData.hound1(); 
-            // this or the one above, both work.
-            
-            // console.log("Checking if I can call fhAttack1 from array")
-            // nmeQ[0];
+            // Best for multiple enemies
+            enemyData.hound1(); 
         } else{
             queueMgmt.removeEle(); //removes first element which is always feralHound1.
         }
@@ -199,8 +251,25 @@ while(health > 0){
         break;
     }
 
+    if(ROUNDS >= 3){
+        if(isHound2Active == 0){
+            isHound2Active++;
+            console.log("Another Feral Hound has joined the battle!");
+        } else{
+            if(feralHoundHealth2 <= 0){
+                enemyData.hound2();
+                console.log(`Feral Hound 2 stats:\nHealth: ${feralHoundHealth2}\nTotal Howls: ${SUMMON_GUARD}`);
+            } else{
+                console.log("Feral Hound 2 Slain");
+                isHound2Active = -1;
+                break;
+            }
+        } 
+    }
+
     // userPrompt();
 
+    // Always after all enemy attacks.
     if (health <= 0) {
         console.log("You have died.");
         break;
