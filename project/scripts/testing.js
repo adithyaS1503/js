@@ -21,8 +21,6 @@ let SUMMON_GUARD = 0;
 let isHound1Active = 1; //always 1, first enemy
 
 
-var nmeQ = [];
-
 
 const enemyData = {
 
@@ -103,23 +101,42 @@ const enemyData = {
 };
 
 
+// Need to figure out how this works.
+const queueMgmt = {
+    execEle: function(){
+        console.log(`Array is: ${nmeQ}`);
+        var nmeQ = [enemyData.hound1()];
+    },
+    addEle: function(){
+        this.nmeQ.push();
+    },
+    removeEle: function(){
+        this.nmeQ.pop();
+    }
+};
+
+
+
 const playerDat = {
-    // health: 20,
-    // stamina: 10,
     attack: 10,
     hAttack: 15,
     determineAction: function(){
         if(userInput==1){
             console.log("You used ATTTACK:10dmg");        
             userInput = this.attack;
+            this.playerRoll(userInput);
         } else if(userInput==2){
             console.log("You used HEAVY-ATTACK:15dmg");
             userInput = this.hAttack;
-        } else {
+            this.playerRoll(userInput);
+        } else if(userInput==3) {
             console.log("You used BLOCK.");
             isBlock++;
+        } else{
+            console.log("Foregoing Round...");
         }
-        this.playerRoll(userInput);
+        
+        // this.playerRoll(userInput);
     },
     playerRoll: function(userInput){
         // RNG bw 0-1
@@ -166,13 +183,15 @@ while(health > 0){
         if(isHound1Active!=0){
 
             // is this the code that exeuctes attack?
-            // nmeQ.push(enemyData.hound1());
-            enemyData.hound1(); // this or the one above, both work.
+            queueMgmt.execEle();
+
+            // enemyData.hound1(); 
+            // this or the one above, both work.
             
             // console.log("Checking if I can call fhAttack1 from array")
             // nmeQ[0];
         } else{
-            nmeQ.shift(); //removes first element which is always feralHound1.
+            queueMgmt.removeEle(); //removes first element which is always feralHound1.
         }
         console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
     } else{
@@ -181,10 +200,6 @@ while(health > 0){
     }
 
     // userPrompt();
-
-    // if (feralHoundHealth <= 0) {
-        
-    // }
 
     if (health <= 0) {
         console.log("You have died.");
