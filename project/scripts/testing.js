@@ -22,8 +22,9 @@ let stamina = 10;
 //Enemies:
 let feralHoundHealth = 10;
 let feralHoundHealth2 = 10;
-let guardsManhealth = 25;
-
+let guardsManhealth = 20;
+let executionerHealth = 30;
+let scarletKingHealth = 50;
 
 // Meta
 let OPPONENTS_QUEUE = 1; // ++ when any other enemy spawns
@@ -33,16 +34,28 @@ let isHound1Active = 1; //always 1, first enemy
 let isHound2Active = 0;
 let isgmActive = 0;
 
+let areaCleared = 0; // 1 - defeated hounds and/or guard, 2 - defeated executioner.
+
 
 // CODE
 
 const enemyData = {
-    // FH
-    gnaw: 15,
-    pounce: 5,
-    // GMan
+    // FH - basic enemy
+    gnaw: 5,
+    pounce: 5, 
+    // GMan - almost implemented.
     slash: 10,
-    pummel: 3,
+    pummel: 3, 
+    // Exec - only deals stamina damage except for clobber, doubtful of implementing.
+    bash: 10,
+    crush: 15,
+    clobber: 20, // only attack that deals damage.
+    // SK - might not implement
+    thrust: 10,
+    cleave: 15,
+    dismantle: 10,
+    impale: 20, 
+    aTrueDeath: 100, //very improbable, one-hit-kill.
     howl: function() {
         if(SUMMON_GUARD<5){
             SUMMON_GUARD++;
