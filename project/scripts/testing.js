@@ -22,36 +22,19 @@ let playerStamina = 10;
 let isBlock = 0;
 
 //nme stat
-let feralHoundHealth = 10;
+// let feralHoundHealth = 10;
 let feralHoundHealth2 = 10;
 let grdsmnH = 30;
 
-// enemy stats for the module
-let feralHoundHealthealth1 = 10;
-let feralHoundHealthealth2 = 10;
-let grdHealth = 25;
 
 // Meta
 let OPPONENTS_QUEUE = 1; // ++ when any other enemy spawns
 let ROUNDS = 0;
 let SUMMON_GUARD = 0;
 
-let isHound1Active = 1;
+let isHound1Active = 1; //always 1, first enemy
 let isHound2Active = 0;
 
-function userPrompt(){
-    let userInput = prompt("Choose: \n\t1. Attack \n\t2. Heavy-Attack \n\t3. Block\n\t4. Use an Inventory-Item\n\t5. Forego Round");
-    switch(parseInt(userInput)){
-        case 1: case 2: case 3:
-            actionRoll(userInput);
-            break;
-        case 4:
-            let spclMove = prompt("WIP\n");
-            console.log("Chosen special:",spclMove)
-        default:
-            console.log("idk");
-    }
-}
 
 
 var nmeQ = [];
@@ -59,6 +42,8 @@ var nmeQ = [];
 
 
 const enemyData = {
+    feralHoundHealth: 10,
+    feralHoundHealth2: 10,
     gnaw: 15,
     pounce: 5, // Pounce used to be 10. OP. Then 5, also OP.
     howl: function() {
@@ -214,6 +199,38 @@ if not, then we pop it from the queue
 */
 
 
+
+const playerDat = {
+    attack: 10,
+    hAttack: 15,
+    determineAction: function(){
+        if(userInput==1){
+            console.log("You used ATTTACK:10dmg");        
+            userInput = this.attack;
+        } else if(userInput==2){
+            console.log("You used HEAVY-ATTACK:15dmg");
+            userInput = this.hAttack;
+        } else {
+            console.log("You used BLOCK");
+            isBlock++;
+        }
+        this.playerRoll(userInput);
+    },
+    playerRoll: function(userInput){
+        // RNG bw 0-1
+        let roll = Math.random();
+        console.log("Your RNG bw 0-1:",roll);
+        // converting something like 2.89279 to 3
+        let modifier = parseFloat(roll.toFixed(1));
+        console.log("Your modifier:",act);
+        attackValue = userInput * modifier;
+        console.log("Your output:",attackValue);
+    },
+};
+
+
+
+
 while(playerHealth>0){
     if(ROUNDS==0){
         console.log("COMMENCE BATTLE");
@@ -224,13 +241,17 @@ while(playerHealth>0){
 
     userPrompt();
 
-    if(feralHoundHealth!=0){
-        console.log("Feral Hound STATS: H:",feralHoundHealth," Howls:",SUMMON_GUARD);
-        enemyData.hound1(); 
+    if(enemyData.feralHoundHealth!=0){
+        if(isHound1Active!=0){
+            nmeQ.push(enemyData.hound1());
+            console.log("Checking if I can call fhAttack1 from array")
+            nmeQ[0];
+        } else{
+            nmeQ.shift(); //removes first element which is always feralHound1.
+        }
+        console.log("Feral Hound STATS: H:",enemyData.feralHoundHealth," Howls:",SUMMON_GUARD);
+        // enemyData.hound1(); 
     }
-    // else{
-    //     OPPONENTS_QUEUE--;
-    // }
 
     // Second Hound activation
     if(ROUNDS>3 && isHound2Active==1){
@@ -245,13 +266,25 @@ while(playerHealth>0){
     console.log("\nEND OF ROUND");
     isBlock = 0;
     ROUNDS++;
-   
-    // if (OPPONENTS_QUEUE <= 0) {
-    //     console.log("You have defeated all enemies! Victory!");
-    //     break;
-    // }
 }
 
+
+
+
+function userPrompt(){
+    let userInput = prompt("Choose: \n\t1. Attack \n\t2. Heavy-Attack \n\t3. Block\n\t4. Use an Inventory-Item\n\t5. Forego Round");
+    switch(parseInt(userInput)){
+        case 1: case 2: case 3:
+            // actionRoll(userInput);
+            playerDat.determineAction(userInput);
+            break;
+        case 4:
+            let spclMove = prompt("WIP\n");
+            console.log("Chosen special:",spclMove)
+        default:
+            console.log("idk");
+    }
+}
 
 function actionRoll(userInput){
     let actionOut = 0;
@@ -266,6 +299,7 @@ function actionRoll(userInput){
             userInput = 0;
         }
 
+        // Calculating your roll and modifier
         let actBase = Math.random()
         console.log("Your RNG bw 0-1:",actBase)
         act = parseFloat(actBase.toFixed(1))
@@ -273,9 +307,10 @@ function actionRoll(userInput){
         actionOut = userInput * act;
 
         console.log("Your attack output:",actionOut);
-        feralHoundHealth -= actionOut;
-        console.log("Feral Hound health is:",feralHoundHealth);
-        if(feralHoundHealth <= 0){
+        // feralHoundHealth -= actionOut;
+        enemyData.feralHoundHealth -= actionOut;
+        console.log("Feral Hound health is:",enemyData.feralHoundHealth);
+        if(enemyData.feralHoundHealth <= 0){
             alert("You have killed Feral Hound.");
         }   
         
