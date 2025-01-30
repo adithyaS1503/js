@@ -2,16 +2,20 @@
 To do: 
 loading enemies into an array. If I can't do that, I'll need to just use if-else conditions.
 choosing between mulitple enemies when there's more than 1.
+transitioning backgrounds, all that stuff
 */
 
 let isBlock = 0;
 let userInput = 0;
 
 // Have to put health and stamina values here otherwise they reset
-let health = 20;
+//Player:
+let health = 200;
 let stamina = 10; 
+//Enemies:
 let feralHoundHealth = 10;
 let feralHoundHealth2 = 10;
+let guardsManhealth = 25;
 
 
 // Meta
@@ -20,12 +24,15 @@ let ROUNDS = 0;
 let SUMMON_GUARD = 0;
 let isHound1Active = 1; //always 1, first enemy
 let isHound2Active = 0;
+let isgmActive = 0;
 
 
+// CODE
 
 const enemyData = {
     gnaw: 15,
     pounce: 5, // Pounce used to be 10. OP. Then 5, also OP.
+    slash: 10,
     howl: function() {
         if(SUMMON_GUARD<5){
             SUMMON_GUARD++;
@@ -98,7 +105,7 @@ const enemyData = {
         }
     },
     hound2: function fhAttack2(){
-        console.log("\nFeral Hound Turn");
+        console.log("\nFeral Hound 2 Turn");
     
         // Call attackRoll() to assign enemyAtkMod and enemyAtk
         this.attackRoll();
@@ -152,7 +159,34 @@ const enemyData = {
         } else {
             this.howl();  
         }
-    }
+    },
+    guardsMan: function guardAttack(){
+        console.log("GuardsMan turn");
+        this.attackRoll(); // if GuardsMan rolls bw 0-0.33, he'll block, else he attacks.
+        if(this.enemyAtkMod >= 0.33){
+            if(isBlock!=0){
+                let enemyActOut = this.slash * this.enemyAtk;
+                console.log("Before damage negate:",enemyActOut);
+                enemyActOut -= 5;
+                if(enemyActOut<=0){
+                    console.log("Perfect BLOCK!");
+                    enemyActOut = 0;
+                }
+                // console.log("GuardsMan used SLASH to deal STAMINA DAMAGE:", enemyActOut);
+                console.log(`GuardsMan used SLASH to deal ${enemyActOut} damage`);
+                health -= enemyActOut;
+                console.log("Your HEALTH is now:", health);
+            
+            } else{
+
+                enemyActOut = this.slash * this.enemyAtk; 
+                health -= enemyActOut;
+                console.log(`GuardsMan used SLASH to deal ${enemyActOut} damage`);
+                console.log("Your HEALTH is now:", health);
+                }
+            }
+
+        }
 };
 
 
@@ -214,6 +248,45 @@ const playerDat = {
             feralHoundHealth -= attackValue;
             console.log(`Feral Hound health is now: ${feralHoundHealth}`);
         }
+    },
+    playerAttackHound2: function(attackValue){
+        if ((feralHoundHealth2 - attackValue) <= 0){
+            feralHoundHealth2= 0;
+            isHound2Active = -1;
+        } else{
+            feralHoundHealth2 -= attackValue;
+            console.log(`Feral Hound 2 health is now: ${feralHoundHealth2}`);
+        }
+    },
+    playerAttackGuard: function(attackValue){
+        if ((guardsManhealth - attackValue) <= 0){
+            guardsManhealth= 0;
+            isgmActive = -1;
+        } else{
+            guardsManhealth -= attackValue;
+            console.log(`GuardsMan health is now: ${guardsManhealth}`);
+        }
+    },
+    chooseTarget: function(){
+        if(OPPONENTS_QUEUE == 1){   
+            this.playerAttack();
+        } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1))&& (isHound2Active == 1)){
+            target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2`));
+            if(target == 1){
+                this.playerAttack();
+            } else{
+                this.playerAttackHound2();
+            }
+        } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1)) && (isgmActive == 1)){
+            target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2\n\t3. GuardsMan`));
+            if(target == 1){
+                this.playerAttack();
+            } else if(target ==2 ){
+                this.playerAttackHound2();
+            } else{
+                this.playerAttackGuard();
+            }
+        }
     }
 };
 
@@ -242,10 +315,11 @@ while(health > 0){
 
             // Best for multiple enemies
             enemyData.hound1(); 
+            console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
         } else{
             queueMgmt.removeEle(); //removes first element which is always feralHound1.
         }
-        console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
+        // console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
     } else{
         console.log("Feral Hound Slain");
         break;
@@ -253,15 +327,36 @@ while(health > 0){
 
     if(ROUNDS >= 3){
         if(isHound2Active == 0){
+            OPPONENTS_QUEUE++;
             isHound2Active++;
             console.log("Another Feral Hound has joined the battle!");
         } else{
-            if(feralHoundHealth2 <= 0){
+            if(feralHoundHealth2 > 0){
                 enemyData.hound2();
                 console.log(`Feral Hound 2 stats:\nHealth: ${feralHoundHealth2}\nTotal Howls: ${SUMMON_GUARD}`);
             } else{
                 console.log("Feral Hound 2 Slain");
                 isHound2Active = -1;
+                OPPONENTS_QUEUE--;
+                break;
+            }
+        } 
+    }
+
+    // Can be completely bypassed if you kill the feral hounds quickly.
+    if (SUMMON_GUARD >= 5){
+        if(isgmActive == 0){
+            OPPONENTS_QUEUE++;
+            isgmActive++;
+            console.log("The GuardsMan has joined the battle!");
+        } else{
+            if(guardsManhealth > 0){
+                enemyData.guardAttack();
+                console.log(`GuardsMan stats:\nHealth: ${guardsManhealth}`);
+            } else{
+                console.log("GuardsMan Slain");
+                isgmActive = -1;
+                OPPONENTS_QUEUE--;
                 break;
             }
         } 
