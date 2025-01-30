@@ -1,9 +1,15 @@
 /*
 To do: 
-choose target menu doesn't show 
+choose target menu doesn't show - done
 loading enemies into an array. If I can't do that, I'll need to just use if-else conditions.
 choosing between mulitple enemies when there's more than 1.
 transitioning backgrounds, all that stuff
+change block to negating 3 stamina and health damage
+add notification to say 'I missed...' if attackRoll == 0
+
+handling the UI: 
+character sprites and background will be visible, input is still via prompts. 
+Some console.log() stuff will be made into alerts
 */
 
 let isBlock = 0;
@@ -11,7 +17,7 @@ let userInput = 0;
 
 // Have to put health and stamina values here otherwise they reset
 //Player:
-let health = 200;
+let health = 20;
 let stamina = 10; 
 //Enemies:
 let feralHoundHealth = 10;
@@ -31,9 +37,12 @@ let isgmActive = 0;
 // CODE
 
 const enemyData = {
+    // FH
     gnaw: 15,
-    pounce: 5, // Pounce used to be 10. OP. Then 5, also OP.
+    pounce: 5,
+    // GMan
     slash: 10,
+    pummel: 3,
     howl: function() {
         if(SUMMON_GUARD<5){
             SUMMON_GUARD++;
@@ -212,11 +221,11 @@ const playerDat = {
     hAttack: 15,
     determineAction: function(){
         if(userInput==1){
-            console.log("You used ATTTACK:10dmg");        
+            console.log("You used ATTTACK: 0-10dmg");        
             userInput = this.attack;
             this.playerRoll(userInput);
         } else if(userInput==2){
-            console.log("You used HEAVY-ATTACK:15dmg");
+            console.log("You used HEAVY-ATTACK: 0-15dmg");
             userInput = this.hAttack;
             this.playerRoll(userInput);
         } else if(userInput==3) {
@@ -249,6 +258,7 @@ const playerDat = {
         } else{
             feralHoundHealth -= attackValue;
             console.log(`Feral Hound health is now: ${feralHoundHealth}`);
+            // alert(`Feral Hound health is now: ${feralHoundHealth}`);
         }
     },
     playerAttackHound2: function(attackValue){
@@ -372,7 +382,17 @@ while(health > 0){
         break;
     }
 
+    // resetting the stamina at the end of the round
+    if(stamina < 5){
+        stamina = 10;
+    } else if (stamina <= 0){
+        console.log(`I'm exhausted...`);
+        stamina = 7; 
+        // punished if you let stamina fall to 0 or lower.
+    }
+
     console.log("\nEND OF ROUND");
+
     isBlock = 0;
     ROUNDS++;
 }
