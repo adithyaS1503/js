@@ -207,8 +207,28 @@ const enemyData = {
                 console.log(`GuardsMan used SLASH to deal ${enemyActOut} damage`);
                 console.log("Your HEALTH is now:", health);
                 }
-            }
-
+            } else if(this.enemyAtkMod < 0.33){
+                if(isBlock!=0){
+                    let enemyActOut = this.pummel * this.enemyAtk;
+                    console.log("Before damage negate:",enemyActOut);
+                    enemyActOut -= 5;
+                    if(enemyActOut<=0){
+                        console.log("Perfect BLOCK!");
+                        enemyActOut = 0;
+                    }
+                    // console.log("GuardsMan used SLASH to deal STAMINA DAMAGE:", enemyActOut);
+                    console.log(`GuardsMan used PUMMEL to deal ${enemyActOut} damage`);
+                    stamina -= enemyActOut;
+                    console.log("Your STAMINA is now:", stamina);
+                
+                } else{
+    
+                    enemyActOut = this.pummel * this.enemyAtk; 
+                    stamina -= enemyActOut;
+                    console.log(`GuardsMan used PUMMEL to deal ${enemyActOut} damage`);
+                    console.log("Your STAMINA is now:", stamina);
+                    }
+                }
         }
 };
 
@@ -347,6 +367,7 @@ while(health > 0){
         // console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
     } else{
         console.log("Feral Hound Slain");
+        feralHoundHealth = 0;
         break;
     }
 
@@ -403,6 +424,14 @@ while(health > 0){
         stamina = 7; 
         // punished if you let stamina fall to 0 or lower.
     }
+
+    // No idea how to do this.
+    // if(((isHound1Active == 0) && (feralHoundHealth == 0)) && ((isHound2Active == 0) && (feralHoundHealth2 ==0))){
+    //     if((SUMMON_GUARD<5))
+    //     {
+    //         console.log("Area Cleared, Delving Deeper...");
+    //     } else if((isgmActive == ))
+    // }
 
     console.log("\nEND OF ROUND");
 
