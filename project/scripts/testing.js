@@ -313,6 +313,7 @@ const playerDat = {
             console.log(`GuardsMan health is now: ${guardsManhealth}`);
         }
     },
+    // Need to consider wheter active and health. Change it to just health?
     chooseTarget: function(attackValue){
         if(OPPONENTS_QUEUE == 1){   
             this.playerAttack(attackValue);
@@ -332,12 +333,15 @@ const playerDat = {
             } else{
                 this.playerAttackGuard(attackValue);
             }
-        }
+        } 
+        // else{
+        //     console.log("Can't choose target");
+        // }
     }
 };
 
 
-
+// global scope
 while(health > 0){
     if(ROUNDS == 0){
         console.log("COMMENCE BATTLE");
@@ -352,6 +356,7 @@ while(health > 0){
 
     userInput = parseInt(prompt("Choose: \n\t1. Attack \n\t2. Heavy-Attack \n\t3. Block\n\t4. Forego Round"));
     playerDat.determineAction(userInput);
+    // handle choosing target here? 
 
 
     // Checking to see if enemy is active
@@ -382,7 +387,7 @@ while(health > 0){
                 console.log("Feral Hound 2 Slain");
                 isHound2Active = -1;
                 OPPONENTS_QUEUE--;
-                break;
+                // break;
             }
         } 
     }
