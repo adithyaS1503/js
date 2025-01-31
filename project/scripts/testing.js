@@ -390,20 +390,20 @@ while(health > 0){
         console.log(`Your current stats: \nHEALTH is ${health} \nSTAMINA is ${stamina}`);
         
         // buffs after clearing an area:
-        while(areaCleared==1){
-            if((feralHoundHealth2 == 0) && (guardsManhealth == 0)){
-                // Once player gets GuardsMan's Sword 
-                playerDat.attack = 15;
-                playerDat.hAttack = 20;
-                // general stats buff
-                health = 25;
-                stamina = 15;
-            } else if((feralHoundHealth2==0) && (isgmActive == 0)){
-                // stats buff only
-                health += 25;
-                stamina += 15;
-            }
-        }
+        // while(areaCleared==1){
+        //     if((feralHoundHealth2 == 0) && (guardsManhealth == 0)){
+        //         // Once player gets GuardsMan's Sword 
+        //         playerDat.attack = 15;
+        //         playerDat.hAttack = 20;
+        //         // general stats buff
+        //         health = 25;
+        //         stamina = 15;
+        //     } else if((feralHoundHealth2==0) && (isgmActive == 0)){
+        //         // stats buff only
+        //         health += 25;
+        //         stamina += 15;
+        //     }
+        // }
     }
     
     userInput = parseInt(prompt("Choose: \n\t1. Attack \n\t2. Heavy-Attack \n\t3. Block\n\t4. Forego Round"));
