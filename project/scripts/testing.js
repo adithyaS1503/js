@@ -1,23 +1,27 @@
 /*
 To do: 
-choose target menu doesn't show - done
 loading enemies into an array. If I can't do that, I'll need to just use if-else conditions.
 choosing between mulitple enemies when there's more than 1.
 transitioning backgrounds, all that stuff
 change block to negating 3 stamina and health damage
 add notification to say 'I missed...' if attackRoll == 0
 
+all exec attacks deal health + stamina damage, if stamina falls below 
+
 handling the UI: 
 character sprites and background will be visible, input is still via prompts. 
 Some console.log() stuff will be made into alerts
 */
+
+// HTML stuff
+roundCounter = document.getElementById('roundCounter');
 
 let isBlock = 0;
 let userInput = 0;
 
 // Have to put health and stamina values here otherwise they reset
 //Player:
-let health = 20;
+let health = 200;
 let stamina = 10; 
 
 //Enemies:
@@ -34,6 +38,7 @@ let SUMMON_GUARD = 0;
 let isHound1Active = 1; //always 1, first enemy
 let isHound2Active = 0;
 let isgmActive = 0;
+let isExecBlocking = 0;
 
 let areaCleared = 0; // 1 - defeated hounds and/or guard, 2 - defeated executioner.
 
@@ -49,7 +54,7 @@ const enemyData = {
     pummel: 3, 
     // Exec - only deals stamina damage except for clobber, doubtful of implementing.
     bash: 10,
-    crush: 15,
+    crush: 10,
     clobber: 20, // only attack that deals damage.
     // SK - might not implement
     thrust: 10,
@@ -143,7 +148,7 @@ const enemyData = {
                     console.log("Perfect BLOCK!");
                     enemyActOut = 0;
                 }
-                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                console.log("Feral Hound 2 used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
                 stamina -= enemyActOut;
                 console.log("Your STAMINA is now:", stamina);
             
@@ -154,9 +159,9 @@ const enemyData = {
                 if(stamina <= 0)
                 {
                     enemyActOut=0;
-                    console.log("You have no STAMINA left, the Feral Hound knocks you down.");           
+                    console.log("You have no STAMINA left, the Feral Hound 2 knocks you down.");           
                 }else{
-                console.log("Feral Hound used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
+                console.log("Feral Hound 2 used POUNCE to deal STAMINA DAMAGE:", enemyActOut);
                 console.log("Your STAMINA is now:", stamina);
                 }
             }
@@ -171,12 +176,12 @@ const enemyData = {
                     console.log("Perfect BLOCK!");
                     enemyActOut = 0;
                 }
-                console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
+                console.log("Feral Hound 2 used GNAW to deal HEALTH DAMAGE:", enemyActOut);
                 health -= enemyActOut;
                 console.log("Your HEALTH is now:", health);
             } else{
                 let enemyActOut = this.gnaw * this.enemyAtk;
-                console.log("Feral Hound used GNAW to deal HEALTH DAMAGE:", enemyActOut);
+                console.log("Feral Hound 2 used GNAW to deal HEALTH DAMAGE:", enemyActOut);
                 health -= enemyActOut;
                 console.log("Your HEALTH is now:", health);
             }
@@ -186,7 +191,7 @@ const enemyData = {
     },
     guardsMan: function guardAttack(){
         console.log("GuardsMan turn");
-        this.attackRoll(); // if GuardsMan rolls bw 0-0.33, he'll block, else he attacks.
+        this.attackRoll();
         if(this.enemyAtkMod >= 0.33){
             if(isBlock!=0){
                 let enemyActOut = this.slash * this.enemyAtk;
@@ -230,6 +235,35 @@ const enemyData = {
                     console.log("Your STAMINA is now:", stamina);
                     }
                 }
+        },
+        executioner: function executionerAttack(){
+            console.log("Executioner turn"); // first enemy to block. You face it alone.
+            this.attackRoll(); 
+            // 0-0.2: block, 0.2-0.5: bash(10Sdmg), 0.5-0.99: crush, 1: clobber(20dmg)
+            if(this.enemyAtkMod < 0.2){
+                isExecBlocking = 1;
+            } else if(this.enemyAtkMod < 0.33){
+                    if(isBlock!=0){
+                        let enemyActOut = this.pummel * this.enemyAtk;
+                        console.log("Before damage negate:",enemyActOut);
+                        enemyActOut -= 5;
+                        if(enemyActOut<=0){
+                            console.log("Perfect BLOCK!");
+                            enemyActOut = 0;
+                        }
+                        // console.log("GuardsMan used SLASH to deal STAMINA DAMAGE:", enemyActOut);
+                        console.log(`GuardsMan used PUMMEL to deal ${enemyActOut} damage`);
+                        stamina -= enemyActOut;
+                        console.log("Your STAMINA is now:", stamina);
+                    
+                    } else{
+        
+                        enemyActOut = this.pummel * this.enemyAtk; 
+                        stamina -= enemyActOut;
+                        console.log(`GuardsMan used PUMMEL to deal ${enemyActOut} damage`);
+                        console.log("Your STAMINA is now:", stamina);
+                        }
+                    }   
         }
 };
 
@@ -315,14 +349,18 @@ const playerDat = {
     },
     // Need to consider wheter active and health. Change it to just health?
     chooseTarget: function(attackValue){
-        if(OPPONENTS_QUEUE == 1){   
+        if(feralHoundHealth != 0){   
             this.playerAttack(attackValue);
         } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1))&& (isHound2Active == 1)){
-            target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2`));
-            if(target == 1){
-                this.playerAttack(attackValue);
+            if((feralHoundHealth == 0) && (feralHoundHealth2!=0)){
+                this.playerAttackHound2(attackValue); 
             } else{
-                this.playerAttackHound2(attackValue);
+                target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2`));
+                if(target == 1){
+                    this.playerAttack(attackValue);
+                } else{
+                    this.playerAttackHound2(attackValue);
+                }
             }
         } else if(((OPPONENTS_QUEUE == 2) || (OPPONENTS_QUEUE == 1)) && (isgmActive == 1)){
             target = parseInt(prompt(`Choose creature to attack:\n\t1. Feral Hound 1\n\t2. Feral Hound 2\n\t3. GuardsMan`));
@@ -351,26 +389,39 @@ while(health > 0){
         stamina = 10;
         console.log(`Your current stats: \nHEALTH is ${health} \nSTAMINA is ${stamina}`);
         
+        // buffs after clearing an area:
+        while(areaCleared==1){
+            if((feralHoundHealth2 == 0) && (guardsManhealth == 0)){
+                // Once player gets GuardsMan's Sword 
+                playerDat.attack = 15;
+                playerDat.hAttack = 20;
+                // general stats buff
+                health = 25;
+                stamina = 15;
+            } else if((feralHoundHealth2==0) && (isgmActive == 0)){
+                // stats buff only
+                health += 25;
+                stamina += 15;
+            }
+        }
     }
-
-
+    
     userInput = parseInt(prompt("Choose: \n\t1. Attack \n\t2. Heavy-Attack \n\t3. Block\n\t4. Forego Round"));
     playerDat.determineAction(userInput);
     // handle choosing target here? 
 
+    isExecBlocking = 0;
 
     // Checking to see if enemy is active
-    if(feralHoundHealth!=0){
-        if(isHound1Active>0){
-            enemyData.hound1(); 
-            console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
-        } 
-        // else{
-        //     queueMgmt.removeEle(); 
-        // }
+    if(feralHoundHealth > 0){
+        enemyData.hound1(); 
+        console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
     } else{
         console.log("Feral Hound Slain");
         feralHoundHealth = 0;
+        if(((isHound2Active)==0) && (feralHoundHealth2 != 0)){
+            ROUNDS = 3;
+        }
         // break;
     }
 
@@ -406,11 +457,26 @@ while(health > 0){
                 console.log("GuardsMan Slain");
                 isgmActive = -1;
                 OPPONENTS_QUEUE--;
-                break;
+                // break;
             }
         } 
     }
 
+    if((guardsManhealth == 0) && (feralHoundHealth2 == 0)){
+        areaCleared++;
+    } else if((feralHoundHealth2 == 0) && (isgmActive == 0)){
+        areaCleared++;
+    } 
+
+    // clear out the current bg and sprites using DOM manipulation
+    // if(areaCleared == 1){
+       
+    // }
+
+    if(ROUNDS >= 50){
+        alert("The Forlorn King has succeeded in his ritual, all hope is lost.");
+        break;
+    }
     // Always after all enemy attacks.
     if (stamina <= 3){
         console.log("I'm exhausted...");
@@ -425,4 +491,5 @@ while(health > 0){
 
     isBlock = 0;
     ROUNDS++;
+    // roundCounter.textContent = ROUNDS;
 }
