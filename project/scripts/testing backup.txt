@@ -19,6 +19,7 @@ let userInput = 0;
 //Player:
 let health = 20;
 let stamina = 10; 
+
 //Enemies:
 let feralHoundHealth = 10;
 let feralHoundHealth2 = 10;
@@ -343,7 +344,9 @@ while(health > 0){
         console.log(`Your HEALTH is ${health} and STAMINA is ${stamina}`);
     } else if(ROUNDS>0){
         console.log(`\nROUND ${ROUNDS}`);
+        stamina = 10;
         console.log(`Your current stats: \nHEALTH is ${health} \nSTAMINA is ${stamina}`);
+        
     }
 
 
@@ -353,17 +356,17 @@ while(health > 0){
 
     // Checking to see if enemy is active
     if(feralHoundHealth!=0){
-        if(isHound1Active!=0){
+        if(isHound1Active>0){
             enemyData.hound1(); 
             console.log(`Feral Hound stats:\nHealth: ${feralHoundHealth}\nHowls: ${SUMMON_GUARD}`);
-        } else{
-            queueMgmt.removeEle(); //removes first element which is always feralHound1.
-            // I can remove this else condition
-        }
+        } 
+        // else{
+        //     queueMgmt.removeEle(); 
+        // }
     } else{
         console.log("Feral Hound Slain");
         feralHoundHealth = 0;
-        break;
+        // break;
     }
 
     if(ROUNDS >= 3){
@@ -404,27 +407,14 @@ while(health > 0){
     }
 
     // Always after all enemy attacks.
+    if (stamina <= 3){
+        console.log("I'm exhausted...");
+    }
+    
     if (health <= 0) {
         console.log("You have died.");
         break;
     }
-
-    // resetting the stamina at the end of the round
-    if(stamina < 5){
-        stamina = 10;
-    } else if (stamina <= 0){
-        console.log(`I'm exhausted...`);
-        stamina = 7; 
-        // punished if you let stamina fall to 0 or lower.
-    }
-
-    // No idea how to do this.
-    // if(((isHound1Active == 0) && (feralHoundHealth == 0)) && ((isHound2Active == 0) && (feralHoundHealth2 ==0))){
-    //     if((SUMMON_GUARD<5))
-    //     {
-    //         console.log("Area Cleared, Delving Deeper...");
-    //     } else if((isgmActive == ))
-    // }
 
     console.log("\nEND OF ROUND");
 
